@@ -1,3 +1,4 @@
+from turtle import pen
 from typing import Optional, Union
 from fastapi import FastAPI
 from mangum import Mangum
@@ -64,8 +65,8 @@ class Trainitem(BaseModel):
     frame: Union[list[Scoringitem_train], None] = None
     # frame: Union[Scoringitem, None] = None
 
-with open('cat_weight.pkl', 'rb') as f:
-    model = pickle.load(f)
+# with open('cat_weight.pkl', 'rb') as f:
+#     model = pickle.load(f)
 
 @app.get("/")
 async def root():
@@ -116,20 +117,25 @@ def train(item:Trainitem):
 
     scr = accuracy_score(y_val, y_pred)
 
-    return int(scr)
+    return float(scr)
 
 
 @app.post('/test/')
 async def scoring_endpoint(item:Scoringitem):
+    filename = 'cat_weight.pkl'
+    model = joblib.load(filename)
+
+    # with open('cat_weight.pkl', 'rb') as f:
+    #     model = pickle.load(f)
     # df = pd.DataFrame(item.keypoints)
     # item = jsonable_encoder(item)
     data = pd.DataFrame(columns=['left_eye_inner_x', 'left_eye_x', 'left_eye_outer_x', 
                              'right_eye_inner_x', 'right_eye_x', 'right_eye_outer_x', 
-                             'nose_x','mouth_left_x','mouth_right_x','ans'])
+                             'nose_x','mouth_left_x','mouth_right_x'])
 
     data.loc[0] = [item.keypoints[1].x, item.keypoints[2].x, item.keypoints[3].x, 
                     item.keypoints[4].x, item.keypoints[5].x, item.keypoints[9].x,
-                    item.keypoints[0].x, item.keypoints[9].x, item.keypoints[10].x, 0]
+                    item.keypoints[0].x, item.keypoints[9].x, item.keypoints[10].x]
     # # print(df)
     # predict = model.predict(df)
     new_data = pd.DataFrame(columns=['0_2_dist_x', '0_5_dist_x', '0_2_5_diff_x', '1_4_dist_x', '0_9_10_diff_x', '0_9_10_ratio_x'] )
@@ -146,8 +152,8 @@ async def scoring_endpoint(item:Scoringitem):
     pred_X = scaler.transform(new_data)
     prediction = model.predict(pred_X)
     result = {}
-    result['prediction'] = int(prediction)
+    result['prediction'] = float(prediction[0])
     # ttt = jsonable_encoder(dict(prediction))  
-    return result
+    return new_data
 
 handler = Mangum(app)
