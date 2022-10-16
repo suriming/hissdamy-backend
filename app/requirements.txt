@@ -12,7 +12,6 @@ idna==3.3
 joblib==1.2.0
 kiwisolver==1.4.4
 mangum==0.15.1
-matplotlib==3.6.1
 numpy==1.23.4
 packaging==21.3
 pandas==1.5.0
@@ -27,7 +26,6 @@ scipy==1.9.2
 six==1.16.0
 sklearn==0.0
 sniffio==1.2.0
-SQLAlchemy==1.4.41
 starlette==0.19.1
 tenacity==8.1.0
 threadpoolctl==3.1.0
