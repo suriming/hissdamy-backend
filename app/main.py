@@ -5,12 +5,9 @@ import pickle
 import pandas as pd
 from pydantic import BaseModel
 import numpy as np
-from sklearn.metrics import accuracy_score
 import catboost
-from fastapi.encoders import jsonable_encoder
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import StandardScaler
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -86,10 +83,5 @@ async def scoring_endpoint(item:Scoringitem):
     result['prediction'] = int(prediction)
     # ttt = jsonable_encoder(dict(prediction))  
     return result
-
-@app.get("/predict")
-def fetch_predictions(keypoints):
-
-    return {}
 
 handler = Mangum(app)
