@@ -1,4 +1,3 @@
-from turtle import pen
 from typing import Optional, Union
 from fastapi import FastAPI
 from mangum import Mangum
@@ -86,6 +85,8 @@ def train(item:Trainitem):
 
     scaler = StandardScaler()
     scaler.fit(X_train)
+    scaler_filename = "scaler.pkl"
+    joblib.dump(scaler, scaler_filename)
 
     X_train = scaler.transform(X_train)
     X_test = scaler.transform(X_test)
@@ -129,7 +130,8 @@ async def scoring_endpoint(item:Scoringitem):
     new_data['0_9_10_diff_x'] = data['nose_x'] - ((data['mouth_left_x'] + data['mouth_right_x']) / 2)
     new_data['0_9_10_ratio_x'] = data['nose_x'] / ((data['mouth_left_x'] + data['mouth_right_x']) / 2)
 
-    scaler = StandardScaler()
+    scaler_filename = "scaler.pkl"
+    scaler = joblib.load(scaler_filename)
     # new_data = pd.DataFrame(new_data)
     scaler.fit(new_data)
     pred_X = scaler.transform(new_data)
