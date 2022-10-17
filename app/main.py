@@ -2,12 +2,11 @@ from turtle import pen
 from typing import Optional, Union
 from fastapi import FastAPI
 from mangum import Mangum
-import pickle
-from matplotlib.pyplot import sca
+# from matplotlib.pyplot import sca
 import pandas as pd
 from pydantic import BaseModel
 import numpy as np
-from catboost import CatBoostClassifier, Pool
+from catboost import CatBoostClassifier
 
 from sklearn.preprocessing import StandardScaler
 # from fastapi.middleware.cors import CORSMiddleware
@@ -34,19 +33,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# middleware =[Middleware(CORSMiddleware, allow_or)]
-
-# origins = [
-#     "http://localhost:3000", "http://0.0.0.0:3000"
-# ]
-
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=origins,
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 class KeypointsItem(BaseModel):
     x: float
     y: float
@@ -71,10 +57,6 @@ class Trainitem(BaseModel):
 @app.get("/")
 async def root():
     return {"message": "CI/CD test"}
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
 
 @app.post('/train/')
 def train(item:Trainitem):
