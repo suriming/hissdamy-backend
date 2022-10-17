@@ -17,6 +17,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
       # sam build 
+      - run: cd app
       - run: sam build --use-container
 
 # Run Unit tests- Specify unit tests here 
