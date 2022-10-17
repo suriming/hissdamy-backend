@@ -79,6 +79,7 @@ def train(item:Trainitem):
 
     X = new_data.drop(['ans'], axis=1)
     y = new_data[['ans']]
+    # print("FFF")
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
     X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=42)
