@@ -139,6 +139,6 @@ async def scoring_endpoint(item:Scoringitem):
     result = {}
     result['prediction'] = float(prediction[0])
     # ttt = jsonable_encoder(dict(prediction))  
-    return new_data
+    return result
 
 handler = Mangum(app)
