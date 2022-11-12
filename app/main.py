@@ -21,7 +21,7 @@ from sklearn.metrics import accuracy_score
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000", "http://0.0.0.0:3000", "http://127.0.0.1:8000", "http://localhost:3000/complete"
+    "http://localhost:3000", "http://0.0.0.0:3000", "http://127.0.0.1:8000", "http://localhost:3000/complete", "https://d2994vnof0kcde.cloudfront.net"
 ]
 
 app.add_middleware(
@@ -83,14 +83,14 @@ def train(item:Trainitem):
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=42)
     X_test, X_val, y_test, y_val = train_test_split(X_test, y_test, test_size=0.5, random_state=42)
 
-    scaler = StandardScaler()
-    scaler.fit(X_train)
-    scaler_filename = "scaler.pkl"
-    joblib.dump(scaler, scaler_filename)
+    # scaler = StandardScaler()
+    # scaler.fit(X_train)
+    # scaler_filename = "scaler.pkl"
+    # joblib.dump(scaler, scaler_filename)
 
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
-    X_val = scaler.transform(X_val)
+    # X_train = scaler.transform(X_train)
+    # X_test = scaler.transform(X_test)
+    # X_val = scaler.transform(X_val)
 
     cat_clf = CatBoostClassifier(iterations=50,random_seed=42, max_bin=8)
     cat_clf.fit(X_train, y_train)
@@ -111,7 +111,7 @@ async def scoring_endpoint(item:Scoringitem):
 
     # with open('cat_weight.pkl', 'rb') as f:
     #     model = pickle.load(f)
-    # df = pd.DataFrame(item.keypoints)
+    df = pd.DataFrame(item.keypoints)
     # item = jsonable_encoder(item)
     data = pd.DataFrame(columns=['left_eye_inner_x', 'left_eye_x', 'left_eye_outer_x', 
                              'right_eye_inner_x', 'right_eye_x', 'right_eye_outer_x', 
@@ -130,15 +130,15 @@ async def scoring_endpoint(item:Scoringitem):
     new_data['0_9_10_diff_x'] = data['nose_x'] - ((data['mouth_left_x'] + data['mouth_right_x']) / 2)
     new_data['0_9_10_ratio_x'] = data['nose_x'] / ((data['mouth_left_x'] + data['mouth_right_x']) / 2)
 
-    scaler_filename = "scaler.pkl"
-    scaler = joblib.load(scaler_filename)
+    # scaler_filename = "scaler.pkl"
+    # scaler = joblib.load(scaler_filename)
     # new_data = pd.DataFrame(new_data)
-    scaler.fit(new_data)
-    pred_X = scaler.transform(new_data)
-    prediction = model.predict(pred_X)
-    result = {}
-    result['prediction'] = float(prediction[0])
+    # scaler.fit(new_data)s
+    # pred_X = scaler.transform(new_data)
+    prediction = model.predict(new_data)
+    # result = {}
+    # result['prediction'] = float(prediction[0])
     # ttt = jsonable_encoder(dict(prediction))  
-    return result
+    return float(prediction[0])
 
 handler = Mangum(app)
